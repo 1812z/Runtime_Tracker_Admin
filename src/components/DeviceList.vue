@@ -173,7 +173,7 @@
                 {{ summaries.summaries[device.device].summary || '暂无总结内容' }}
               </p>
               <div class="mt-2 text-xs text-gray-500">
-                生成时间: {{ formatDate(summaries.summaries[device.device].date) }}
+                生成时间: {{ formatDate(summaries.summaries[device.device].timestamp) }}
               </div>
             </div>
           </div>
