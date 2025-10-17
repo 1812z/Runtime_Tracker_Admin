@@ -10,7 +10,7 @@
           </div>
           <div>
             <h1 class="text-xl font-bold text-gray-900">管理后台</h1>
-            <p class="text-xs text-gray-500">AI Summary Management</p>
+            <p class="text-xs text-gray-500">Runtime Tracker Admin</p>
           </div>
         </div>
 
