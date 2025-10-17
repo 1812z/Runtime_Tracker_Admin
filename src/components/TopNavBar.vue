@@ -14,7 +14,8 @@
           </div>
         </div>
 
-        <div class="flex items-center space-x-4">
+        <!-- 桌面端按钮 -->
+        <div class="hidden md:flex items-center space-x-4">
           <button
               @click="showPasswordModal = true"
               class="bg-blue-50 px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
@@ -38,66 +39,99 @@
             <span>{{ loading ? '重启中...' : '重启' }}</span>
           </button>
         </div>
+
+        <!-- 手机端菜单按钮 -->
+        <div class="md:hidden relative">
+          <button
+              @click="showMenu = !showMenu"
+              class="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+
+          <!-- 下拉菜单 -->
+          <div v-if="showMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-40">
+            <button
+                @click="handleMenuClick('password')"
+                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            >
+              修改密码
+            </button>
+            <button
+                @click="handleMenuClick('restart')"
+                :disabled="loading"
+                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 hover:text-yellow-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {{ loading ? '重启中...' : '重启' }}
+            </button>
+            <button
+                @click="handleMenuClick('logout')"
+                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors border-t border-gray-200"
+            >
+              退出登录
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- 修改密码弹窗 -->
-
     <div v-if="showPasswordModal" class="fixed inset-0 flex items-center justify-center z-50">
       <div class="absolute inset-0 bg-gray-200 opacity-50"></div>
-      <div class="bg-white rounded-xl shadow-xl p-6 w-full max-w-md relative z-10">
+      <div class="bg-white rounded-xl shadow-xl p-6 w-full max-w-md relative z-10 mx-4">
         <h3 class="text-lg font-semibold text-gray-900 mb-4">修改账户密码</h3>
 
-
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">账户名</label>
-              <input
-                  v-model="currentUsername"
-                  type="text"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-600 cursor-not-allowed"
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">新密码</label>
-              <input
-                  v-model="newPassword"
-                  type="password"
-                  placeholder="请输入新密码"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">确认密码</label>
-              <input
-                  v-model="confirmPassword"
-                  type="password"
-                  placeholder="请再次输入新密码"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">账户名</label>
+            <input
+                v-model="currentUsername"
+                type="text"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-600 cursor-not-allowed"
+                disabled
+            />
           </div>
 
-          <div class="flex justify-end space-x-3 mt-6">
-            <button
-                @click="closePasswordModal"
-                class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-            >
-              取消
-            </button>
-            <button
-                @click="handleUpdatePassword"
-                :disabled="updating"
-                class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors disabled:opacity-50"
-            >
-              {{ updating ? '更新中...' : '确认修改' }}
-            </button>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">新密码</label>
+            <input
+                v-model="newPassword"
+                type="password"
+                placeholder="请输入新密码"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">确认密码</label>
+            <input
+                v-model="confirmPassword"
+                type="password"
+                placeholder="请再次输入新密码"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
           </div>
         </div>
-    </div>
 
+        <div class="flex justify-end space-x-3 mt-6">
+          <button
+              @click="closePasswordModal"
+              class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+          >
+            取消
+          </button>
+          <button
+              @click="handleUpdatePassword"
+              :disabled="updating"
+              class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors disabled:opacity-50"
+          >
+            {{ updating ? '更新中...' : '确认修改' }}
+          </button>
+        </div>
+      </div>
+    </div>
   </nav>
 </template>
 
@@ -110,6 +144,7 @@ const router = useRouter();
 const loading = ref(false);
 const updating = ref(false);
 const showPasswordModal = ref(false);
+const showMenu = ref(false);
 const currentUsername = ref('');
 const newPassword = ref('');
 const confirmPassword = ref('');
@@ -117,7 +152,6 @@ const confirmPassword = ref('');
 const emit = defineEmits(['toast']);
 
 onMounted(() => {
-  // 从 localStorage 获取当前用户名 (登录时应该保存)
   currentUsername.value = localStorage.getItem('admin_username') || 'admin';
 });
 
@@ -125,6 +159,17 @@ const closePasswordModal = () => {
   showPasswordModal.value = false;
   newPassword.value = '';
   confirmPassword.value = '';
+};
+
+const handleMenuClick = (action) => {
+  showMenu.value = false;
+  if (action === 'password') {
+    showPasswordModal.value = true;
+  } else if (action === 'restart') {
+    handleRestart();
+  } else if (action === 'logout') {
+    handleLogout();
+  }
 };
 
 const handleUpdatePassword = async () => {
@@ -141,7 +186,6 @@ const handleUpdatePassword = async () => {
   updating.value = true;
   try {
     const response = await updateAccount({ password: newPassword.value });
-
     emit('toast', response.message || '密码修改成功，即将重新登录', 'success');
 
     setTimeout(() => {
