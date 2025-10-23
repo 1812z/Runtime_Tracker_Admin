@@ -91,7 +91,9 @@ const displayAllowedKeys = [
   'PUBLISH_API_URL',
   'PUBLISH_API_KEY',
   'DEFAULT_TIMEZONE_OFFSET',
-  'AI_SUMMARY_ENABLED'
+  'AI_SUMMARY_ENABLED',
+  'WEB_DEVICE_COUNT',
+  'WEB_COMMENT'
 ];
 
 const configLabels = {
@@ -108,7 +110,9 @@ const configLabels = {
   'PUBLISH_API_URL': '发布 API 地址',
   'PUBLISH_API_KEY': '发布 API 密钥',
   'DEFAULT_TIMEZONE_OFFSET': '默认时区偏移',
-  'AI_SUMMARY_ENABLED': 'AI 摘要启用'
+  'AI_SUMMARY_ENABLED': 'AI 摘要启用',
+  'WEB_DEVICE_COUNT': '设备数显示',
+  'WEB_COMMENT': '评论显示'
 };
 
 const configs = ref([]);
