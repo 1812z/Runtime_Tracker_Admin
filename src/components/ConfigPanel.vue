@@ -16,41 +16,61 @@
         <div class="flex items-start gap-2 min-w-0">
           <span class="text-gray-600 font-medium flex-shrink-0 pt-1">{{ getConfigLabel(config.key) }}</span>
           <div class="flex-1 min-w-0 flex items-start justify-end gap-2">
-            <div v-if="!editingKey || editingKey !== config.key" class="flex items-center gap-2 min-w-0">
-              <span class="text-gray-900 font-medium text-right break-all">
-                {{ maskSensitiveValue(config.key, config.value) }}
+            <!-- 布尔类型配置项：显示开关 -->
+            <div v-if="isBooleanConfig(config.key)" class="flex items-center gap-2">
+              <span class="text-gray-900 font-medium text-sm">
+                {{ getBooleanValue(config.value) ? '开启' : '关闭' }}
               </span>
               <button
-                  @click="startEdit(config.key, config.value)"
-                  class="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-colors flex-shrink-0"
+                  @click="toggleBoolean(config.key, config.value)"
+                  :disabled="loading.config"
+                  class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  :class="getBooleanValue(config.value) ? 'bg-blue-500' : 'bg-gray-300'"
               >
-                编辑
+                <span
+                    class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+                    :class="getBooleanValue(config.value) ? 'translate-x-6' : 'translate-x-1'"
+                ></span>
               </button>
             </div>
-            <div v-else class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
-              <input
-                  v-model="editingValue"
-                  type="text"
-                  class="flex-1 px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-0"
-                  :placeholder="`输入新 ${getConfigLabel(config.key)}`"
-                  @keyup.enter="saveConfig(config.key)"
-                  @keyup.escape="cancelEdit"
-              >
-              <div class="flex gap-2 flex-shrink-0">
+            <!-- 普通配置项：显示编辑按钮 -->
+            <div v-else class="flex items-center gap-2 min-w-0 w-full">
+              <div v-if="!editingKey || editingKey !== config.key" class="flex items-center gap-2 min-w-0 w-full justify-end">
+                <span class="text-gray-900 font-medium text-right break-all">
+                  {{ maskSensitiveValue(config.key, config.value) }}
+                </span>
                 <button
-                    @click="saveConfig(config.key)"
-                    :disabled="loading.config"
-                    class="px-2 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    @click="startEdit(config.key, config.value)"
+                    class="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-colors flex-shrink-0"
                 >
-                  保存
+                  编辑
                 </button>
-                <button
-                    @click="cancelEdit"
-                    :disabled="loading.config"
-                    class="px-2 py-1 bg-gray-300 text-gray-700 text-xs rounded hover:bg-gray-400 disabled:opacity-50"
+              </div>
+              <div v-else class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
+                <input
+                    v-model="editingValue"
+                    type="text"
+                    class="flex-1 px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-0"
+                    :placeholder="`输入新 ${getConfigLabel(config.key)}`"
+                    @keyup.enter="saveConfig(config.key)"
+                    @keyup.escape="cancelEdit"
                 >
-                  取消
-                </button>
+                <div class="flex gap-2 flex-shrink-0">
+                  <button
+                      @click="saveConfig(config.key)"
+                      :disabled="loading.config"
+                      class="px-2 py-1 bg-green-500 text-white text-xs rounded hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    保存
+                  </button>
+                  <button
+                      @click="cancelEdit"
+                      :disabled="loading.config"
+                      class="px-2 py-1 bg-gray-300 text-gray-700 text-xs rounded hover:bg-gray-400 disabled:opacity-50"
+                  >
+                    取消
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -96,6 +116,13 @@ const displayAllowedKeys = [
   'WEB_COMMENT'
 ];
 
+// 布尔类型配置项（使用开关控制）
+const booleanConfigKeys = [
+  'AI_SUMMARY_ENABLED',
+  'WEB_DEVICE_COUNT',
+  'WEB_COMMENT'
+];
+
 const configLabels = {
   'PORT': '端口号',
   'MONGODB_URI': 'MongoDB 地址',
@@ -131,6 +158,44 @@ const getConfigLabel = (key) => {
 const maskSensitiveValue = (key, value) => {
   if (!value) return '(未设置)';
   return value;
+};
+
+// 判断是否为布尔类型配置项
+const isBooleanConfig = (key) => {
+  return booleanConfigKeys.includes(key);
+};
+
+// 获取布尔值（支持多种格式）
+const getBooleanValue = (value) => {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'string') {
+    const lowerValue = value.toLowerCase().trim();
+    return lowerValue === 'true' || lowerValue === '1' || lowerValue === 'yes' || lowerValue === 'on';
+  }
+  return !!value;
+};
+
+// 切换布尔值
+const toggleBoolean = async (key, currentValue) => {
+  const currentBoolean = getBooleanValue(currentValue);
+  const newValue = !currentBoolean;
+
+  loading.config = true;
+  try {
+    await updateConfig({ [key]: String(newValue) });
+
+    const configIndex = configs.value.findIndex(c => c.key === key);
+    if (configIndex !== -1) {
+      configs.value[configIndex].value = String(newValue);
+    }
+
+    emit('toast', `${getConfigLabel(key)} 已${newValue ? '开启' : '关闭'}`, 'success');
+  } catch (error) {
+    console.error('更新配置失败:', error);
+    emit('toast', error.response?.data?.message || '更新配置失败', 'error');
+  } finally {
+    loading.config = false;
+  }
 };
 
 const loadConfigs = async () => {
