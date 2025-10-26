@@ -101,8 +101,6 @@ const emit = defineEmits(['toast']);
 const displayAllowedKeys = [
   'PORT',
   'MONGODB_URI',
-  'ADMIN_PASSWD',
-  'JWT_SECRET',
   'SECRET',
   'AI_API_URL',
   'AI_API_KEY',
@@ -129,7 +127,7 @@ const configLabels = {
   'ADMIN_USER': '管理员用户名',
   'ADMIN_PASSWD': '管理员密码',
   'JWT_SECRET': 'JWT 密钥',
-  'SECRET': '应用密钥',
+  'SECRET': '应用上报密钥',
   'AI_API_URL': 'AI API 地址',
   'AI_API_KEY': 'AI API 密钥',
   'AI_MODEL': 'AI 模型',
@@ -157,6 +155,8 @@ const getConfigLabel = (key) => {
 
 const maskSensitiveValue = (key, value) => {
   if (!value) return '(未设置)';
+  // 如果值是 ***** 表示后端未返回，直接显示
+  if (value === '*****') return '*****';
   return value;
 };
 
@@ -219,12 +219,20 @@ const loadConfigs = async () => {
       configList = [];
     }
 
-    configs.value = configList
-        .filter(config => config && config.key && displayAllowedKeys.includes(config.key))
-        .map(config => ({
-          key: config.key,
-          value: config.value || ''
-        }));
+    // 创建一个Map来存储后端返回的配置
+    const configMap = new Map();
+    configList.forEach(config => {
+      if (config && config.key) {
+        configMap.set(config.key, config.value);
+      }
+    });
+
+    // 确保白名单中的所有配置项都显示，未返回的显示为 *****
+    configs.value = displayAllowedKeys.map(key => ({
+      key: key,
+      value: configMap.has(key) ? (configMap.get(key) || '') : '*****'
+    }));
+
     emit('toast', '配置已加载', 'success');
   } catch (error) {
     console.error('加载配置失败:', error);
@@ -236,7 +244,8 @@ const loadConfigs = async () => {
 
 const startEdit = (key, value) => {
   editingKey.value = key;
-  editingValue.value = value;
+  // 如果值是 *****，清空输入框
+  editingValue.value = value === '*****' ? '' : value;
 };
 
 const cancelEdit = () => {
