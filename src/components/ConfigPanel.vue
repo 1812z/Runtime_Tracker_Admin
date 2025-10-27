@@ -197,7 +197,7 @@ const configCategories = [
     name: 'AI 配置',
     icon: 'brain',
     color: 'text-purple-500',
-    keys: ['AI_API_URL', 'AI_API_KEY', 'AI_MODEL', 'AI_MAX_TOKENS', 'AI_SUMMARY_ENABLED']
+    keys: [ 'AI_SUMMARY_ENABLED', 'AI_API_URL', 'AI_API_KEY', 'AI_MODEL', 'AI_MAX_TOKENS']
   },
   {
     name: 'AI总结发布配置',
@@ -266,7 +266,7 @@ const configLabels = {
   AI_API_KEY: 'AI API 密钥',
   AI_MODEL: 'AI 模型',
   AI_MAX_TOKENS: 'AI 最大 Token 数',
-  AI_SUMMARY_ENABLED: '启用 AI 总结',
+  AI_SUMMARY_ENABLED: 'AI 总结总开关',
   PUBLISH_ENABLED: '发布开关',
   PUBLISH_API_URL: '发布 API 地址',
   PUBLISH_API_KEY: '发布 API 密钥',
