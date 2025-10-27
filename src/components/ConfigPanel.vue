@@ -203,7 +203,7 @@ const configCategories = [
     name: 'AI总结发布配置',
     icon: 'upload',
     color: 'text-green-500',
-    keys: ['PUBLISH_API_URL', 'PUBLISH_API_KEY']
+    keys: ['PUBLISH_ENABLED', 'PUBLISH_API_URL', 'PUBLISH_API_KEY']
   },
   {
     name: '网站功能',
@@ -249,12 +249,12 @@ const onLeave = (el) => {
 const displayAllowedKeys = [
   'PORT', 'MONGODB_URI', 'DEFAULT_TIMEZONE_OFFSET', 'SECRET',
   'AI_API_URL', 'AI_API_KEY', 'AI_MODEL', 'AI_MAX_TOKENS', 'AI_SUMMARY_ENABLED',
-  'PUBLISH_API_URL', 'PUBLISH_API_KEY',
+  'PUBLISH_ENABLED', 'PUBLISH_API_URL', 'PUBLISH_API_KEY',
   'WEB_DEVICE_COUNT', 'WEB_COMMENT'
 ];
 
 // 布尔类型的配置键
-const booleanConfigKeys = ['AI_SUMMARY_ENABLED', 'WEB_DEVICE_COUNT', 'WEB_COMMENT'];
+const booleanConfigKeys = ['AI_SUMMARY_ENABLED', 'WEB_DEVICE_COUNT', 'WEB_COMMENT', 'PUBLISH_ENABLED'];
 
 // 配置项标签
 const configLabels = {
@@ -267,6 +267,7 @@ const configLabels = {
   AI_MODEL: 'AI 模型',
   AI_MAX_TOKENS: 'AI 最大 Token 数',
   AI_SUMMARY_ENABLED: '启用 AI 总结',
+  PUBLISH_ENABLED: '发布开关',
   PUBLISH_API_URL: '发布 API 地址',
   PUBLISH_API_KEY: '发布 API 密钥',
   WEB_DEVICE_COUNT: '显示设备数量',
@@ -284,6 +285,7 @@ const configDescriptions = {
   AI_MODEL: '使用的 AI 模型名称',
   AI_MAX_TOKENS: 'AI 生成内容的最大 Token 数量',
   AI_SUMMARY_ENABLED: '是否启用 AI 自动总结功能',
+  PUBLISH_ENABLED: '发布总结',
   PUBLISH_API_URL: '内容发布的 API 地址',
   PUBLISH_API_KEY: '内容发布的认证密钥',
   WEB_DEVICE_COUNT: '是否在网站显示设备数量统计',

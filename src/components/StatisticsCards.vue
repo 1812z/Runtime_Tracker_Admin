@@ -16,16 +16,31 @@
       </div>
     </div>
 
-    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 relative group">
       <div class="flex items-center justify-between">
-        <div>
+        <div class="flex-1">
           <p class="text-sm font-medium text-gray-600">定时任务</p>
           <p class="text-2xl font-bold text-gray-900 mt-2">{{ aiStatus.cronJobsCount || 0 }}</p>
+          <p class="text-xs text-gray-500 mt-1">{{ scheduleInterval }}</p>
         </div>
         <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
           <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
+        </div>
+      </div>
+
+      <!-- Tooltip on hover -->
+      <div class="absolute left-0 top-full mt-2 w-64 bg-gray-900 text-white text-xs rounded-lg p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10 shadow-lg">
+        <p class="font-semibold mb-2">执行时间表</p>
+        <div class="space-y-1">
+          <div v-for="(time, index) in aiStatus.schedules" :key="index" class="flex items-center">
+            <span class="w-2 h-2 bg-blue-400 rounded-full mr-2"></span>
+            <span>{{ time }}</span>
+          </div>
+        </div>
+        <div class="mt-2 pt-2 border-t border-gray-700">
+          <p class="text-gray-400">时区: {{ formatTimezone }}</p>
         </div>
       </div>
     </div>
@@ -61,7 +76,9 @@
 </template>
 
 <script setup>
-defineProps({
+import { computed } from 'vue';
+
+const props = defineProps({
   aiStatus: {
     type: Object,
     required: true
@@ -71,7 +88,44 @@ defineProps({
     required: true
   }
 });
+
+// 计算定时间隔
+const scheduleInterval = computed(() => {
+  const schedules = props.aiStatus.schedules;
+  if (!schedules || schedules.length === 0) return '无定时任务';
+  if (schedules.length === 1) return '单次执行';
+
+  // 计算时间间隔
+  const times = schedules.map(time => {
+    const [hours] = time.split(':').map(Number);
+    return hours;
+  });
+
+  times.sort((a, b) => a - b);
+  const intervals = [];
+  for (let i = 1; i < times.length; i++) {
+    intervals.push(times[i] - times[i - 1]);
+  }
+
+  // 检查是否为固定间隔
+  const isUniform = intervals.every(interval => interval === intervals[0]);
+  if (isUniform) {
+    return `每 ${intervals[0]} 小时`;
+  } else {
+    return `${schedules.length} 次/天`;
+  }
+});
+
+// 格式化时区
+const formatTimezone = computed(() => {
+  const tz = props.aiStatus.defaultTimezone || '';
+  return tz.replace('UTCundefined', 'UTC+0') || 'UTC+0';
+});
 </script>
 
 <style scoped>
+/* 确保 tooltip 在其他元素之上 */
+.group:hover .absolute {
+  pointer-events: none;
+}
 </style>
