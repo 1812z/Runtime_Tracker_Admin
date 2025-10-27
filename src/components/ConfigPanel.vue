@@ -197,7 +197,7 @@ const configCategories = [
     name: 'AI 配置',
     icon: 'brain',
     color: 'text-purple-500',
-    keys: [ 'AI_SUMMARY_ENABLED', 'AI_API_URL', 'AI_API_KEY', 'AI_MODEL', 'AI_MAX_TOKENS']
+    keys: ['AI_SUMMARY_ENABLED', 'AI_API_URL', 'AI_API_KEY', 'AI_MODEL', 'AI_MAX_TOKENS']
   },
   {
     name: 'AI总结发布配置',
@@ -248,7 +248,7 @@ const onLeave = (el) => {
 // 所有配置项的键(按分类顺序)
 const displayAllowedKeys = [
   'PORT', 'MONGODB_URI', 'DEFAULT_TIMEZONE_OFFSET', 'SECRET',
-  'AI_API_URL', 'AI_API_KEY', 'AI_MODEL', 'AI_MAX_TOKENS', 'AI_SUMMARY_ENABLED',
+  'AI_SUMMARY_ENABLED', 'AI_API_URL', 'AI_API_KEY', 'AI_MODEL', 'AI_MAX_TOKENS',
   'PUBLISH_ENABLED', 'PUBLISH_API_URL', 'PUBLISH_API_KEY',
   'WEB_DEVICE_COUNT', 'WEB_COMMENT'
 ];
