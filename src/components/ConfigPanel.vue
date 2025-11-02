@@ -197,7 +197,7 @@ const configCategories = [
     name: 'AI 配置',
     icon: 'brain',
     color: 'text-purple-500',
-    keys: ['AI_SUMMARY_ENABLED', 'AI_API_URL', 'AI_API_KEY', 'AI_MODEL', 'AI_MAX_TOKENS']
+    keys: ['AI_SUMMARY_ENABLED', 'AI_API_URL', 'AI_API_KEY', 'AI_MODEL', 'AI_MAX_TOKENS', 'AI_PROMPT']
   },
   {
     name: 'AI总结发布配置',
@@ -248,7 +248,7 @@ const onLeave = (el) => {
 // 所有配置项的键(按分类顺序)
 const displayAllowedKeys = [
   'PORT', 'MONGODB_URI', 'DEFAULT_TIMEZONE_OFFSET', 'SECRET',
-  'AI_SUMMARY_ENABLED', 'AI_API_URL', 'AI_API_KEY', 'AI_MODEL', 'AI_MAX_TOKENS',
+  'AI_SUMMARY_ENABLED', 'AI_API_URL', 'AI_API_KEY', 'AI_MODEL', 'AI_MAX_TOKENS', 'AI_PROMPT',
   'PUBLISH_ENABLED', 'PUBLISH_API_URL', 'PUBLISH_API_KEY',
   'WEB_DEVICE_COUNT', 'WEB_COMMENT'
 ];
@@ -266,6 +266,7 @@ const configLabels = {
   AI_API_KEY: 'AI API 密钥',
   AI_MODEL: 'AI 模型',
   AI_MAX_TOKENS: 'AI 最大 Token 数',
+  AI_PROMPT: 'AI 提示词',
   AI_SUMMARY_ENABLED: 'AI 总结总开关',
   PUBLISH_ENABLED: '发布开关',
   PUBLISH_API_URL: '发布 API 地址',
@@ -284,6 +285,7 @@ const configDescriptions = {
   AI_API_KEY: 'AI 服务的认证密钥',
   AI_MODEL: '使用的 AI 模型名称',
   AI_MAX_TOKENS: 'AI 生成内容的最大 Token 数量',
+  AI_PROMPT: '用于自定义风格',
   AI_SUMMARY_ENABLED: '是否启用 AI 自动总结功能',
   PUBLISH_ENABLED: '发布总结',
   PUBLISH_API_URL: '内容发布的 API 地址',
