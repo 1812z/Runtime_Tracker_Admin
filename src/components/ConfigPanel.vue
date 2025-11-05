@@ -30,6 +30,20 @@
             <span class="text-xs text-gray-500 bg-white px-2 py-0.5 rounded-full">
               {{ getConfigsByCategory(category.keys).length }} 项
             </span>
+            <!-- Giscus 链接 -->
+            <a
+                v-if="category.link"
+                :href="category.link"
+                target="_blank"
+                rel="noopener noreferrer"
+                @click.stop
+                class="text-xs text-blue-500 hover:text-blue-600 hover:underline flex items-center gap-1"
+            >
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+              配置指南
+            </a>
           </div>
           <svg
               class="w-5 h-5 text-gray-400 transition-transform duration-200"
@@ -210,6 +224,24 @@ const configCategories = [
     icon: 'toggle',
     color: 'text-orange-500',
     keys: ['WEB_DEVICE_COUNT', 'WEB_COMMENT']
+  },
+  {
+    name: '评论区',
+    icon: 'chat',
+    color: 'text-indigo-500',
+    link: 'https://giscus.app/zh-CN',
+    keys: [
+      'GISCUS_REPO',
+      'GISCUS_REPOID',
+      'GISCUS_CATEGORY',
+      'GISCUS_CATEGORYID',
+      'GISCUS_MAPPING',
+      'GISCUS_REACTIONSENABLED',
+      'GISCUS_EMITMETADATA',
+      'GISCUS_INPUTPOSITION',
+      'GISCUS_THEME',
+      'GISCUS_LANG'
+    ]
   }
 ];
 
@@ -218,7 +250,8 @@ const expandedCategories = reactive({
   '基础设置': false,
   'AI 配置': false,
   'AI总结发布配置': false,
-  '网站功能': false
+  '网站功能': false,
+  '评论区': false
 });
 
 // 切换分类展开/收起
@@ -250,11 +283,20 @@ const displayAllowedKeys = [
   'PORT', 'MONGODB_URI', 'DEFAULT_TIMEZONE_OFFSET', 'SECRET',
   'AI_SUMMARY_ENABLED', 'AI_API_URL', 'AI_API_KEY', 'AI_MODEL', 'AI_MAX_TOKENS', 'AI_PROMPT',
   'PUBLISH_ENABLED', 'PUBLISH_API_URL', 'PUBLISH_API_KEY',
-  'WEB_DEVICE_COUNT', 'WEB_COMMENT'
+  'WEB_DEVICE_COUNT', 'WEB_COMMENT',
+  'GISCUS_REPO', 'GISCUS_REPOID', 'GISCUS_CATEGORY', 'GISCUS_CATEGORYID', 'GISCUS_MAPPING',
+  'GISCUS_REACTIONSENABLED', 'GISCUS_EMITMETADATA', 'GISCUS_INPUTPOSITION', 'GISCUS_THEME', 'GISCUS_LANG'
 ];
 
 // 布尔类型的配置键
-const booleanConfigKeys = ['AI_SUMMARY_ENABLED', 'WEB_DEVICE_COUNT', 'WEB_COMMENT', 'PUBLISH_ENABLED'];
+const booleanConfigKeys = [
+  'AI_SUMMARY_ENABLED',
+  'WEB_DEVICE_COUNT',
+  'WEB_COMMENT',
+  'PUBLISH_ENABLED',
+  'GISCUS_REACTIONSENABLED',
+  'GISCUS_EMITMETADATA'
+];
 
 // 配置项标签
 const configLabels = {
@@ -272,7 +314,17 @@ const configLabels = {
   PUBLISH_API_URL: '发布 API 地址',
   PUBLISH_API_KEY: '发布 API 密钥',
   WEB_DEVICE_COUNT: '显示设备数量',
-  WEB_COMMENT: '启用评论功能'
+  WEB_COMMENT: '启用评论功能',
+  GISCUS_REPO: '仓库',
+  GISCUS_REPOID: '仓库 ID',
+  GISCUS_CATEGORY: '分类',
+  GISCUS_CATEGORYID: '分类 ID',
+  GISCUS_MAPPING: '页面 discussion 映射关系',
+  GISCUS_REACTIONSENABLED: '表情回应',
+  GISCUS_EMITMETADATA: '输出 discussion 元数据',
+  GISCUS_INPUTPOSITION: '输入框位置',
+  GISCUS_THEME: '主题',
+  GISCUS_LANG: '语言'
 };
 
 // 配置项描述
@@ -291,7 +343,17 @@ const configDescriptions = {
   PUBLISH_API_URL: '内容发布的 API 地址',
   PUBLISH_API_KEY: '内容发布的认证密钥',
   WEB_DEVICE_COUNT: '是否在网站显示设备数量统计',
-  WEB_COMMENT: '是否启用网站评论功能'
+  WEB_COMMENT: '是否启用网站评论功能',
+  GISCUS_REPO: 'GitHub 仓库(格式: 用户名/仓库名)',
+  GISCUS_REPOID: 'GitHub 仓库 ID',
+  GISCUS_CATEGORY: 'Discussion 分类名称',
+  GISCUS_CATEGORYID: 'Discussion 分类 ID',
+  GISCUS_MAPPING: '如: pathname, url, title, og:title 等',
+  GISCUS_REACTIONSENABLED: '是否在顶部显示表情选择器',
+  GISCUS_EMITMETADATA: '是否将 discussion 元数据发送回父窗口',
+  GISCUS_INPUTPOSITION: '如: top(输入框在上方) 或 bottom(输入框在下方)',
+  GISCUS_THEME: '设置喜欢的主题',
+  GISCUS_LANG: '如: zh-CN'
 };
 
 const configs = ref([]);
@@ -355,6 +417,19 @@ const getCategoryIcon = (iconName) => {
         'stroke-linejoin': 'round',
         'stroke-width': '2',
         d: 'M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4'
+      })
+    ]),
+    chat: () => h('svg', {
+      class: 'w-5 h-5',
+      fill: 'none',
+      stroke: 'currentColor',
+      viewBox: '0 0 24 24'
+    }, [
+      h('path', {
+        'stroke-linecap': 'round',
+        'stroke-linejoin': 'round',
+        'stroke-width': '2',
+        d: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z'
       })
     ])
   };
@@ -505,5 +580,4 @@ onMounted(() => {
 .collapse-leave-active {
   transition: height 0.3s ease-in-out;
 }
-
 </style>
