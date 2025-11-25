@@ -223,7 +223,7 @@ const configCategories = [
     name: '网站功能',
     icon: 'toggle',
     color: 'text-orange-500',
-    keys: ['WEB_DEVICE_COUNT', 'WEB_COMMENT']
+    keys: ['WEB_DEVICE_COUNT', 'WEB_COMMENT', 'WEB_SUMMARY']
   },
   {
     name: '评论区',
@@ -283,7 +283,7 @@ const displayAllowedKeys = [
   'PORT', 'MONGODB_URI', 'DEFAULT_TIMEZONE_OFFSET', 'SECRET',
   'AI_SUMMARY_ENABLED', 'AI_API_URL', 'AI_API_KEY', 'AI_MODEL', 'AI_MAX_TOKENS', 'AI_PROMPT',
   'PUBLISH_ENABLED', 'PUBLISH_API_URL', 'PUBLISH_API_KEY',
-  'WEB_DEVICE_COUNT', 'WEB_COMMENT',
+  'WEB_DEVICE_COUNT', 'WEB_COMMENT', 'WEB_SUMMARY',
   'GISCUS_REPO', 'GISCUS_REPOID', 'GISCUS_CATEGORY', 'GISCUS_CATEGORYID', 'GISCUS_MAPPING',
   'GISCUS_REACTIONSENABLED', 'GISCUS_EMITMETADATA', 'GISCUS_INPUTPOSITION', 'GISCUS_THEME', 'GISCUS_LANG'
 ];
@@ -293,6 +293,7 @@ const booleanConfigKeys = [
   'AI_SUMMARY_ENABLED',
   'WEB_DEVICE_COUNT',
   'WEB_COMMENT',
+  'WEB_SUMMARY',
   'PUBLISH_ENABLED',
   'GISCUS_REACTIONSENABLED',
   'GISCUS_EMITMETADATA'
@@ -315,6 +316,7 @@ const configLabels = {
   PUBLISH_API_KEY: '发布 API 密钥',
   WEB_DEVICE_COUNT: '显示设备数量',
   WEB_COMMENT: '启用评论功能',
+  WEB_SUMMARY: '启用总览功能',
   GISCUS_REPO: '仓库',
   GISCUS_REPOID: '仓库 ID',
   GISCUS_CATEGORY: '分类',
@@ -344,6 +346,7 @@ const configDescriptions = {
   PUBLISH_API_KEY: '内容发布的认证密钥',
   WEB_DEVICE_COUNT: '是否在网站显示设备数量统计',
   WEB_COMMENT: '是否启用网站评论功能',
+  WEB_SUMMARY: '是否启用所有设备数据总览功能',
   GISCUS_REPO: 'GitHub 仓库(格式: 用户名/仓库名)',
   GISCUS_REPOID: 'GitHub 仓库 ID',
   GISCUS_CATEGORY: 'Discussion 分类名称',
