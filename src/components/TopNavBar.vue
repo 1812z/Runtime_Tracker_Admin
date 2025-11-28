@@ -204,8 +204,9 @@ const handleUpdatePassword = async () => {
 const handleRestart = async () => {
   loading.value = true;
   try {
-    await restart();
-    emit('toast', '服务器重启中...5秒后刷新页面', 'success');
+    let response;
+    response = await restart();
+    emit('toast', response?.message, 'success', response?.details || '');
     setTimeout(() => {
       location.reload();
     }, 5000);

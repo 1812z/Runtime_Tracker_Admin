@@ -476,17 +476,18 @@ const toggleBoolean = async (key, currentValue) => {
 
   loading.config = true;
   try {
-    await updateConfig({ [key]: String(newValue) });
+    let response;
+    response = await updateConfig({ [key]: String(newValue) });
 
     const configIndex = configs.value.findIndex(c => c.key === key);
     if (configIndex !== -1) {
       configs.value[configIndex].value = String(newValue);
     }
 
-    emit('toast', `${getConfigLabel(key)} 已${newValue ? '开启' : '关闭'}`, 'success');
+    emit('toast', `${getConfigLabel(key)} 已${newValue ? '开启' : '关闭'}`, 'success', response?.details || '');
   } catch (error) {
     console.error('更新配置失败:', error);
-    emit('toast', error.response?.data?.message || '更新配置失败', 'error');
+    emit('toast', error.response?.data?.message || '更新配置失败', 'error', error.response?.data?.details || '');
   } finally {
     loading.config = false;
   }
@@ -527,7 +528,7 @@ const loadConfigs = async () => {
     emit('toast', '配置已加载', 'success');
   } catch (error) {
     console.error('加载配置失败:', error);
-    emit('toast', error.response?.data?.message || '加载配置失败', 'error');
+    emit('toast', error.response?.data?.message || '加载配置失败', 'error', error.response?.data?.details || '');
   } finally {
     loading.refresh = false;
   }
@@ -555,19 +556,20 @@ const saveConfig = async (key) => {
 
   loading.config = true;
   try {
-    await updateConfig({ [key]: editingValue.value });
+    let response;
+    response = await updateConfig({ [key]: editingValue.value });
 
     const configIndex = configs.value.findIndex(c => c.key === key);
     if (configIndex !== -1) {
       configs.value[configIndex].value = editingValue.value;
     }
 
-    emit('toast', `${getConfigLabel(key)} 已更新`, 'success');
+    emit('toast', `${getConfigLabel(key)} 已更新`, 'success', response?.details || '');
     editingKey.value = null;
     editingValue.value = '';
   } catch (error) {
     console.error('更新配置失败:', error);
-    emit('toast', error.response?.data?.message || '更新配置失败', 'error');
+    emit('toast', error.response?.data?.message || '更新配置失败', 'error', error.response?.data?.details || '');
   } finally {
     loading.config = false;
   }

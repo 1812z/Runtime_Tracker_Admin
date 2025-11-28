@@ -72,11 +72,13 @@ const deviceCount = ref(0);
 const toast = reactive({
   show: false,
   message: '',
+  details: '',
   type: 'success'
 });
 
-const showToast = (message, type = 'success') => {
+const showToast = (message, type = 'success', details = '') => {
   toast.message = message;
+  toast.details = details;
   toast.type = type;
   toast.show = true;
   setTimeout(() => {
